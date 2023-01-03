@@ -77,6 +77,19 @@ app.put("/courses/:id", function(request, response) {
 
 })
 
+/// DELETE ///
+app.delete("/courses/:id", function(request, response) {
+
+    mongo.delete("courses", request.params.id)
+    .then(function(result) {
+        response.send(result)
+    })
+    .catch(function(error) {
+        response.send(error)
+    })
+
+})
+
 /// RUN ///
 app.listen(3000, function() {
     console.log("Running!")
