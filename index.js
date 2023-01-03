@@ -19,7 +19,7 @@ function cleanName(name) {
 /// GET ///
 app.get("/", function(request, response) {
     
-    mongo.list()
+    mongo.list(null)
     .then(function(result) {
         response.send(result)
     })
@@ -29,11 +29,26 @@ app.get("/", function(request, response) {
 
 })
 
-app.get("/:collection", function(request, response) {
+app.get("/:database", function(request, response) {
 
+    var database = cleanName(request.params.database)
+    
+    mongo.list(database)
+    .then(function(result) {
+        response.send(result)
+    })
+    .catch(function(error) {
+        response.send(error)
+    })
+
+})
+
+app.get("/:database/:collection", function(request, response) {
+
+    var database = cleanName(request.params.database)
     var collection = cleanName(request.params.collection)
 
-    mongo.fetch(collection, null)
+    mongo.fetch(database, collection, null)
     .then(function(result) {
         response.send(result)
     })
@@ -43,11 +58,12 @@ app.get("/:collection", function(request, response) {
 
 })
 
-app.get("/:collection/:id", function(request, response) {
+app.get("/:database/:collection/:id", function(request, response) {
 
+    var database = cleanName(request.params.database)
     var collection = cleanName(request.params.collection)
     
-    mongo.fetch(collection, request.params.id)
+    mongo.fetch(database, collection, request.params.id)
     .then(function(result) {
         response.send(result)
     })
@@ -58,13 +74,14 @@ app.get("/:collection/:id", function(request, response) {
 })
 
 /// POST ///
-app.post("/:collection", (request, response) => {
+app.post("/:database/:collection", (request, response) => {
 
+    var database = cleanName(request.params.database)
     var collection = cleanName(request.params.collection)
 
     let data = request.body
   
-    mongo.create(collection, data)
+    mongo.create(database, collection, data)
     .then(result => {
         response.send(result)
     })
@@ -75,13 +92,14 @@ app.post("/:collection", (request, response) => {
 })
 
 /// PUT ///
-app.put("/:collection/:id", function(request, response) {
+app.put("/:database/:collection/:id", function(request, response) {
     
+    var database = cleanName(request.params.database)
     var collection = cleanName(request.params.collection)
 
     let data = request.body
 
-    mongo.update(collection, request.params.id, data)
+    mongo.update(database, collection, request.params.id, data)
     .then(function(result) {
         response.send(result)
     })
@@ -92,11 +110,12 @@ app.put("/:collection/:id", function(request, response) {
 })
 
 /// DELETE ///
-app.delete("/:collection/:id", function(request, response) {
+app.delete("/:database/:collection/:id", function(request, response) {
 
+    var database = cleanName(request.params.database)
     var collection = cleanName(request.params.collection)
 
-    mongo.delete(collection, request.params.id)
+    mongo.delete(database, collection, request.params.id)
     .then(function(result) {
         response.send(result)
     })
