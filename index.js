@@ -20,8 +20,34 @@ app.get("/", function(request, response) {
     .catch(function(error) {
         response.send(error)
     })
+
 })
 
+app.get("/courses", function(request, response) {
+    
+    mongo.fetch("courses", null)
+    .then(function(result) {
+        response.send(result)
+    })
+    .catch(function(error) {
+        response.send(error)
+    })
+
+})
+
+app.get("/courses/:id", function(request, response) {
+    mongo.fetch("courses", request.params.id)
+    .then(function(result) {
+        response.send(result)
+    })
+    .catch(function(error) {
+        response.send(error)
+    })
+})
+
+
+
+/// POST ///
 app.post("/courses", (request, response) => {
 
     let data = request.body
