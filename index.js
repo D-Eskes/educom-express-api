@@ -10,6 +10,12 @@ app.use((request, result, next) => {
     next()
 })
 
+
+function cleanName(name) {
+    return name.toLowerCase().trim()
+}
+
+
 /// GET ///
 app.get("/", function(request, response) {
     
@@ -23,9 +29,11 @@ app.get("/", function(request, response) {
 
 })
 
-app.get("/courses", function(request, response) {
-    
-    mongo.fetch("courses", null)
+app.get("/:collection", function(request, response) {
+
+    var collection = cleanName(request.params.collection)
+
+    mongo.fetch(collection, null)
     .then(function(result) {
         response.send(result)
     })
@@ -35,9 +43,11 @@ app.get("/courses", function(request, response) {
 
 })
 
-app.get("/courses/:id", function(request, response) {
+app.get("/:collection/:id", function(request, response) {
+
+    var collection = cleanName(request.params.collection)
     
-    mongo.fetch("courses", request.params.id)
+    mongo.fetch(collection, request.params.id)
     .then(function(result) {
         response.send(result)
     })
@@ -48,11 +58,13 @@ app.get("/courses/:id", function(request, response) {
 })
 
 /// POST ///
-app.post("/courses", (request, response) => {
+app.post("/:collection", (request, response) => {
+
+    var collection = cleanName(request.params.collection)
 
     let data = request.body
   
-    mongo.create("courses", data)
+    mongo.create(collection, data)
     .then(result => {
         response.send(result)
     })
@@ -63,11 +75,13 @@ app.post("/courses", (request, response) => {
 })
 
 /// PUT ///
-app.put("/courses/:id", function(request, response) {
+app.put("/:collection/:id", function(request, response) {
     
+    var collection = cleanName(request.params.collection)
+
     let data = request.body
 
-    mongo.update("courses", request.params.id, data)
+    mongo.update(collection, request.params.id, data)
     .then(function(result) {
         response.send(result)
     })
@@ -78,9 +92,11 @@ app.put("/courses/:id", function(request, response) {
 })
 
 /// DELETE ///
-app.delete("/courses/:id", function(request, response) {
+app.delete("/:collection/:id", function(request, response) {
 
-    mongo.delete("courses", request.params.id)
+    var collection = cleanName(request.params.collection)
+
+    mongo.delete(collection, request.params.id)
     .then(function(result) {
         response.send(result)
     })
