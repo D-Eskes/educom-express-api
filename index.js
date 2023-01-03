@@ -1,4 +1,5 @@
 import express from "express"
+import mongo from "./lib/mongo.js"
 
 const app = express()
 app.use(express.json())
@@ -9,62 +10,30 @@ app.use((request, result, next) => {
     next()
 })
 
-const courses = [
-    {id: 1, name: "JavaScript" },
-    {id: 3, name: "Express" },
-    {id: 2, name: "NodeJS" },
-]
-
-/// FETCH ///
-let course = {
-    name: "Express Server API",
-    level: "intermediate",
-    technology: ["JavaScript", "NodeJS", "Express", "MongoDB"]        
-}
-let url = "http://localhost:3000/courses"
-
-
-fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(course)
-})
-.then(entry => entry.json())
-.then(entry => {
-    console.log(entry)
-})
-.catch(error => {
-    console.log(error)
-})
-
-
 /// GET ///
 app.get("/", function(request, response) {
-    response.send({page: "Homepage"})
-})
-
-app.get("/courses", function(request, response) {
-    response.send(courses)
-})
-
-app.get("/courses/:id", function(request, response) {
-    let searchId = parseInt(request.params.id)
-    let result = courses.filter(function(course) {
-        return (course.id === searchId)
+    
+    mongo.list()
+    .then(function(result) {
+        response.send(result)
     })
-    response.send(result[0])
+    .catch(function(error) {
+        response.send(error)
+    })
 })
 
-/// POST ///
 app.post("/courses", (request, response) => {
-    console.log(request.body)
-    response.send({received: request.body})
-})
 
-/// PUT ///
-app.put("/courses/:id", (request, response) => {
-    let searchId = parseInt(request.params.id)
-    response.send({id: searchId, received: request.body})
+    let data = request.body
+  
+    mongo.create("courses", data)
+    .then(result => {
+        response.send(result)
+    })
+    .catch(error => {
+        response.send(error)
+    })
+
 })
 
 /// RUN ///
