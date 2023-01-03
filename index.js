@@ -36,6 +36,7 @@ app.get("/courses", function(request, response) {
 })
 
 app.get("/courses/:id", function(request, response) {
+    
     mongo.fetch("courses", request.params.id)
     .then(function(result) {
         response.send(result)
@@ -43,9 +44,8 @@ app.get("/courses/:id", function(request, response) {
     .catch(function(error) {
         response.send(error)
     })
+
 })
-
-
 
 /// POST ///
 app.post("/courses", (request, response) => {
@@ -57,6 +57,21 @@ app.post("/courses", (request, response) => {
         response.send(result)
     })
     .catch(error => {
+        response.send(error)
+    })
+
+})
+
+/// PUT ///
+app.put("/courses/:id", function(request, response) {
+    
+    let data = request.body
+
+    mongo.update("courses", request.params.id, data)
+    .then(function(result) {
+        response.send(result)
+    })
+    .catch(function(error) {
         response.send(error)
     })
 
